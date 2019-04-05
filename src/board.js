@@ -4,23 +4,17 @@ import Square from './square';
 function reducer(state, action) {
   switch (action.type) {
     case 'select':
-      let status;
       const squares = state.squares.slice();
+      // guard clause to disable moves if game is one or square is taken
       if (calculateWinner(squares) || squares[action.payload.index]) {
         return state;
       }
       const xIsNext = !state.xIsNext;
       squares[action.payload.index] = state.xIsNext ? 'X' : 'O';
-      let winner = calculateWinner(squares);
-      if (winner === null) {
-        status = `Next player: ${xIsNext ? 'X' : 'O'}`;
-      } else {
-        status = `Winner: ${winner}`;
-      }
       return {
         squares: squares,
         xIsNext: xIsNext,
-        status: status,
+        status: generateStatusMessage(squares, xIsNext),
       };
     default:
       throw new Error();
@@ -74,4 +68,13 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function generateStatusMessage(squares, xIsNext) {
+  const winner = calculateWinner(squares);
+  if (winner === null) {
+    return `Next player: ${xIsNext ? 'X' : 'O'}`;
+  } else {
+    return `Winner: ${winner}`;
+  }
 }
